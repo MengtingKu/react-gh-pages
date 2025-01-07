@@ -1,0 +1,9 @@
+@import "bootstrap/scss/functions";
+
+@import "./variables";
+// 引用UI套件
+@import "bootstrap/scss/bootstrap";
+
+body {
+    justify-content: center;
+}
