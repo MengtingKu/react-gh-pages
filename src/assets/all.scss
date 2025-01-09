@@ -1,9 +1,13 @@
 @import "bootstrap/scss/functions";
-
 @import "./variables";
-// 引用UI套件
 @import "bootstrap/scss/bootstrap";
+@import url(https://fonts.googleapis.com/css?family=Montserrat);
 
-body {
-    justify-content: center;
+@import "./admin/loading.scss";
+@import "./admin/login.scss";
+
+* {
+    margin: 0;
+    padding: 0;
+    list-style: none;
 }
