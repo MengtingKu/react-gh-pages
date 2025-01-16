@@ -46,7 +46,7 @@ function LoginForm({ setIsAuth }) {
 
     return (
         <>
-            <div className="container-fluid">
+            <div className="login_container">
                 <div className="login">
                     <form onSubmit={handleLogin} className="form ">
                         <h2 className="login_title">後台管理者登入系統</h2>

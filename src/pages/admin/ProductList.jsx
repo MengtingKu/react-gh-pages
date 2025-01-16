@@ -1,4 +1,3 @@
-/* eslint-disable no-useless-escape */
 import { useState, useEffect } from 'react';
 import axios from 'axios';
 import ProductDetail from '../../component/ProductDetail';
@@ -11,22 +10,21 @@ function ProductList() {
     const [tempProduct, setTempProduct] = useState(null);
     const [products, setProducts] = useState([]);
 
-    const checkLogin = () => {
-        const token = document.cookie.replace(
-            /(?:(?:^|.*;\s*)reactToken\s*\=\s*([^;]*).*$)|^.*$/,
-            '$1'
-        );
-        axios.defaults.headers.common.Authorization = token;
-        axios
-            .post(`${baseUrl}/api/user/check`)
-            .then(res => {
-                console.log('登入成功:', res.data.uid);
-            })
-            .catch(error => {
-                console.error(error);
-                alert(error?.response.data.error.message);
-            });
-    };
+    // const checkLogin = () => {
+    //     const token = document.cookie.replace(
+    //         /(?:(?:^|.*;\s*)reactToken\s*\=\s*([^;]*).*$)|^.*$/,
+    //         '$1'
+    //     );
+    //     axios.defaults.headers.common.Authorization = token;
+    //     axios
+    //         .post(`${baseUrl}/api/user/check`)
+    //         .then(res => {
+    //             alert('登入成功');
+    //         })
+    //         .catch(error => {
+    //             alert(error?.response.data.error.message);
+    //         });
+    // };
 
     const getProductList = () => {
         
@@ -45,7 +43,6 @@ function ProductList() {
     };
 
     useEffect(() => {
-        checkLogin();
         getProductList();
     }, []);
     

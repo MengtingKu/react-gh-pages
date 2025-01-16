@@ -4,7 +4,7 @@ function Loading({ status }) {
     return (
         <>
             <div className="loading">
-                <div className="bounceBall me-2"></div>
+                <div className="bounce_ball me-2"></div>
                 <div className="text h5">NOW LOADING...ʕ̯•͡ˑ͓•̯᷅ʔ</div>
             </div>
         </>
