@@ -1,28 +1,26 @@
 import { useState, useEffect } from 'react';
 import axios from 'axios';
 
-import LoginForm from './pages/admin/LoginForm';
-// import ProductList from './pages/admin/ProductList';
-import Products from './pages/admin/Products';
+import LoginForm from '@pages/admin/LoginForm';
+import DefaultLayout from '@layouts/DefaultLayout';
 
 const { VITE_BASE_URL: baseUrl } = import.meta.env;
 
 function App() {
     const [isAuth, setIsAuth] = useState(false);
 
-    const checkLogin = () => {
-        axios
-            .post(`${baseUrl}/api/user/check`)
-            .then(() => {
-                setIsAuth(true);
-            })
-            .catch(error => {
-                alert(error?.response.data.message);
-            });
+    const checkLogin = async () => {
+        try {
+            await axios.post(`${baseUrl}/api/user/check`);
+            setIsAuth(true);
+        } catch (error) {
+            alert(error?.response.data.message);
+        }
     };
 
     useEffect(() => {
         const token = document.cookie.replace(
+            // eslint-disable-next-line no-useless-escape
             /(?:(?:^|.*;\s*)reactToken\s*\=\s*([^;]*).*$)|^.*$/,
             '$1'
         );
@@ -31,7 +29,9 @@ function App() {
         checkLogin();
     }, []);
 
-    return <> {isAuth ? <Products /> : <LoginForm setIsAuth={setIsAuth} />}</>;
+    return (
+        <> {isAuth ? <DefaultLayout /> : <LoginForm setIsAuth={setIsAuth} />}</>
+    );
 }
 
 export default App;

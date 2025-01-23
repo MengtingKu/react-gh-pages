@@ -1,3 +1,10 @@
+import PropTypes from 'prop-types';
+import { useEffect, useRef } from 'react';
+import { Modal } from 'bootstrap';
+import axios from 'axios';
+
+const { VITE_BASE_URL: baseUrl, VITE_APP_PATH: apiPath } = import.meta.env;
+
 const modalTitles = {
     delete: '刪除',
     edit: '編輯',
@@ -8,16 +15,81 @@ const maxOfImages = 5;
 const minOfImages = 1;
 
 function ProductModal({
-    modalRef,
     modalType,
     closeModal,
     templateData,
-    handleModalInputChange,
     handleProduct,
-    handleImagesInput,
-    handleAddImages,
-    handleRemoveImages,
+    setTemplateData,
 }) {
+    const modalRef = useRef(null);
+    const modalInstance = useRef(null);
+
+    useEffect(() => {
+        modalInstance.current = new Modal(modalRef.current, {
+            backdrop: false,
+        });
+        if (modalType) {
+            modalInstance.current.show();
+        } else {
+            modalInstance.current.hide();
+        }
+
+        return () => {
+            if (modalInstance.current) {
+                modalInstance.current.dispose();
+            }
+        };
+    }, [modalType]);
+
+    const handleModalInputChange = e => {
+        const { id, value, type, checked } = e.target;
+        setTemplateData(prevData => ({
+            ...prevData,
+            [id]: type === 'checkbox' ? checked : value,
+        }));
+    };
+
+    const handleFileInput = async e => {
+        const [file] = e.target.files;
+        const formData = new FormData();
+        formData.append('file-to-upload', file);
+
+        const url = `${baseUrl}/api/${apiPath}/admin/upload`;
+
+        try {
+            const res = await axios.post(url, formData);
+            const { imageUrl } = res.data;
+
+            setTemplateData({ ...templateData, imageUrl });
+        } catch (error) {
+            console.log('error=>', error);
+            alert(error.response.data.message || '檔案格式錯誤');
+        } finally {
+            e.target.value = '';
+        }
+    };
+
+    const handleImagesInput = (e, index) => {
+        const { value } = e.target;
+        const newImagesList = [...templateData.imagesUrl];
+        newImagesList[index] = value;
+
+        setTemplateData({ ...templateData, imagesUrl: newImagesList });
+    };
+
+    const handleAddImages = () => {
+        const newImagesList = [...templateData.imagesUrl, ''];
+
+        setTemplateData({ ...templateData, imagesUrl: newImagesList });
+    };
+
+    const handleRemoveImages = () => {
+        const newImagesList = [...templateData.imagesUrl];
+        newImagesList.pop();
+
+        setTemplateData({ ...templateData, imagesUrl: newImagesList });
+    };
+
     const renderContent = () => {
         if (modalType === 'delete') {
             return (
@@ -33,6 +105,21 @@ function ProductModal({
                 <div className="row g-4">
                     <div className="col-md-4">
                         <div className="mb-4">
+                            <div className="mb-3">
+                                <label
+                                    htmlFor="fileInput"
+                                    className="form-label"
+                                >
+                                    主圖上傳
+                                </label>
+                                <input
+                                    className="form-control form-control-sm"
+                                    id="fileInput"
+                                    type="file"
+                                    accept=".jpg,.jpeg,.png"
+                                    onChange={handleFileInput}
+                                />
+                            </div>
                             <label htmlFor="imageUrl" className="form-label">
                                 主圖
                             </label>
@@ -164,6 +251,7 @@ function ProductModal({
                                     name="origin_price"
                                     id="origin_price"
                                     type="number"
+                                    min="0"
                                     className="form-control"
                                     placeholder="請輸入原價"
                                     defaultValue={templateData.origin_price}
@@ -178,6 +266,7 @@ function ProductModal({
                                     name="price"
                                     id="price"
                                     type="number"
+                                    min="0"
                                     className="form-control"
                                     placeholder="請輸入售價"
                                     defaultValue={templateData.price}
@@ -288,5 +377,13 @@ function ProductModal({
         </>
     );
 }
+
+ProductModal.propTypes = {
+    modalType: PropTypes.string,
+    closeModal: PropTypes.func,
+    templateData: PropTypes.object,
+    handleProduct: PropTypes.func,
+    setTemplateData: PropTypes.func,
+};
 
 export default ProductModal;

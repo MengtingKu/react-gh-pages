@@ -1,10 +1,11 @@
 import axios from 'axios';
+import PropTypes from 'prop-types';
 import { useState } from 'react';
-import Loading from '../../component/common/Loading';
+import Loading from '@components/common/Loading';
 
 const { VITE_BASE_URL: baseUrl } = import.meta.env;
 
-function LoginForm({ setIsAuth }) {
+const LoginForm = ({ setIsAuth }) => {
     const [isLoading, setIsLoading] = useState(false);
     const [account, setAccount] = useState({
         username: '',
@@ -21,32 +22,34 @@ function LoginForm({ setIsAuth }) {
         });
     };
 
-    const handleLogin = e => {
+    const handleLogin = async e => {
         e.preventDefault();
         const url = `${baseUrl}/admin/signin`;
         setIsLoading(true);
 
-        axios
-            .post(url, account)
-            .then(res => {
-                const { expired, token } = res.data;
-                document.cookie = `reactToken=${token}; expires=${new Date(
-                    expired
-                )}`;
+        try {
+            const res = await axios.post(url, account);
+            const { expired, token } = res.data;
+            document.cookie = `reactToken=${token}; expires=${new Date(
+                expired
+            )}`;
+            axios.defaults.headers.common.Authorization = token;
 
-                setIsAuth(true);
-            })
-            .catch(error => {
-                alert(error?.response.data.error.message);
-            });
+            setIsAuth(true);
+        } catch (error) {
+            alert(error?.response.data.error.message);
+        } finally {
+            setIsLoading(false);
+        }
     };
+
     if (isLoading) {
         return <Loading status={isLoading} />;
     }
 
     return (
         <>
-            <div className="login_container">
+            <div className="login_form">
                 <div className="login">
                     <form onSubmit={handleLogin} className="form ">
                         <h2 className="login_title">後台管理者登入系統</h2>
@@ -102,6 +105,10 @@ function LoginForm({ setIsAuth }) {
             </div>
         </>
     );
-}
+};
+
+LoginForm.propTypes = {
+    setIsAuth: PropTypes.func.isRequired,
+};
 
 export default LoginForm;

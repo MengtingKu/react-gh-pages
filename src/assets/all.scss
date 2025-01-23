@@ -1,10 +1,11 @@
 @import "bootstrap/scss/functions";
-@import "./variables";
+@import "./common/variables";
 @import "bootstrap/scss/bootstrap";
 @import url(https://fonts.googleapis.com/css?family=Montserrat);
 
-@import "./admin/loading.scss";
-@import "./admin/login.scss";
+@import "./common/loading.scss";
+@import "./admin/pages/login.scss";
+@import "./admin/layout/defaultLayout.scss";
 
 * {
     margin: 0;

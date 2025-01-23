@@ -1,16 +1,19 @@
-function ProductDetail({ tempProduct }) {
+import PropTypes from 'prop-types';
+
+const ProductDetail = ({ tempProduct }) => {
     if (!tempProduct) {
         return <p className="text-secondary">請選擇一個商品查看</p>;
     }
 
     const {
         imageUrl,
+        imagesUrl,
         title,
         category,
         content,
         origin_price,
         price,
-        description
+        description,
     } = tempProduct;
 
     return (
@@ -38,23 +41,39 @@ function ProductDetail({ tempProduct }) {
                         className="card-img-top img-fluid"
                         alt="主圖"
                     />
-                    {/* <div className={imagesUrl.length ? 'd-block' : 'd-none'}>
-                        <h5 className="mt-3">更多圖片：</h5>
-                        <div className="d-flex flex-wrap">
-                            {imagesUrl.map((url, index) => (
-                                <img
-                                    key={index}
-                                    src={url}
-                                    className="img-fluid my-1"
-                                    alt={`${title}_${index + 1}`}
-                                />
-                            ))}
+
+                    {imagesUrl && (
+                        <div className={imagesUrl ? 'd-block' : 'd-none'}>
+                            <h5 className="mt-3">更多圖片：</h5>
+                            <div className="d-flex flex-wrap">
+                                {imagesUrl.map((url, index) => (
+                                    <img
+                                        key={index}
+                                        src={url}
+                                        className="img-fluid my-1"
+                                        alt={`${title}_${index + 1}`}
+                                    />
+                                ))}
+                            </div>
                         </div>
-                    </div> */}
+                    )}
                 </div>
             </div>
         </>
     );
-}
+};
+
+ProductDetail.propTypes = {
+    tempProduct: PropTypes.shape({
+        imageUrl: PropTypes.string.isRequired,
+        imagesUrl: PropTypes.array,
+        title: PropTypes.string.isRequired,
+        category: PropTypes.string.isRequired,
+        content: PropTypes.string.isRequired,
+        origin_price: PropTypes.number.isRequired,
+        price: PropTypes.number.isRequired,
+        description: PropTypes.string.isRequired,
+    }),
+};
 
 export default ProductDetail;

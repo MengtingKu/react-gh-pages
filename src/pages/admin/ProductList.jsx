@@ -1,103 +1,126 @@
 import { useState, useEffect } from 'react';
-import axios from 'axios';
-import ProductDetail from '../../component/ProductDetail';
-import Loading from '../../component/common/Loading';
+import useAdminProductApi from '@hook/useAdminProductApi';
 
-const { VITE_BASE_URL: baseUrl, VITE_APP_PATH: apiPath } = import.meta.env;
+import Loading from '@components/common/Loading';
+import ProductModal from '@components/common/ProductModal';
+import ProductTable from '@components/ProductTable';
+import Pagination from '@components/common/Pagination';
 
-function ProductList() {
-    const [isLoading, setIsLoading] = useState(false);
-    const [tempProduct, setTempProduct] = useState(null);
+const defaultTemplateData = {
+    id: '',
+    imageUrl: '',
+    title: '',
+    category: '',
+    unit: '',
+    origin_price: '',
+    price: '',
+    description: '',
+    content: '',
+    is_enabled: false,
+    imagesUrl: [],
+};
+
+const tableHeader = ['產品名稱', '原價', '售價', '狀態', '操作'];
+
+const ProductList = () => {
     const [products, setProducts] = useState([]);
+    const [modalType, setModalType] = useState('');
+    const [templateData, setTemplateData] = useState(defaultTemplateData);
+    const [pagination, setPagination] = useState({});
 
-    // const checkLogin = () => {
-    //     const token = document.cookie.replace(
-    //         /(?:(?:^|.*;\s*)reactToken\s*\=\s*([^;]*).*$)|^.*$/,
-    //         '$1'
-    //     );
-    //     axios.defaults.headers.common.Authorization = token;
-    //     axios
-    //         .post(`${baseUrl}/api/user/check`)
-    //         .then(res => {
-    //             alert('登入成功');
-    //         })
-    //         .catch(error => {
-    //             alert(error?.response.data.error.message);
-    //         });
-    // };
-
-    const getProductList = () => {
-        
-        setIsLoading(true);
-        const url = `${baseUrl}/api/${apiPath}/admin/products`;
-        axios
-            .get(url)
-            .then(res => {
-                setProducts(res.data.products);
-                
-                setIsLoading(false);
-            })
-            .catch(error => {
-                alert(error?.response.data.message);
-            });
-    };
+    const {
+        isLoading,
+        getProductList,
+        createProduct,
+        updateProduct,
+        deleteProduct,
+    } = useAdminProductApi();
 
     useEffect(() => {
-        getProductList();
-    }, []);
-    
+        const fetchProducts = async () => {
+            const data = await getProductList();
+            setPagination(data.pagination);
+            setProducts(data.products);
+        };
+
+        fetchProducts();
+    }, [getProductList]);
+
+    const openModal = (product, type) => {
+        setModalType(type);
+        setTemplateData({
+            ...defaultTemplateData,
+            ...product,
+        });
+    };
+
+    const closeModal = () => {
+        setModalType('');
+        setTemplateData({
+            ...defaultTemplateData,
+        });
+    };
+
+    const handleProduct = async () => {
+        switch (modalType) {
+            case 'create':
+                await createProduct(templateData);
+                break;
+            case 'edit':
+                await updateProduct(templateData.id, templateData);
+                break;
+            case 'delete':
+                await deleteProduct(templateData.id);
+                break;
+            default:
+                alert('操作失敗');
+        }
+        setModalType('');
+        setTemplateData(defaultTemplateData);
+        const data = await getProductList();
+        setProducts(data.products);
+    };
+
     if (isLoading) {
         return <Loading status={isLoading} />;
     }
 
     return (
         <>
-            <div className="container my-5">
-                <div className="row">
-                    <div className="col-md-6">
-                        <h2>產品列表</h2>
-                        <table className="table table-striped table-hover">
-                            <thead>
-                                <tr className="text-center">
-                                    <th scope="col">產品名稱</th>
-                                    <th scope="col">原價</th>
-                                    <th scope="col">售價</th>
-                                    <th scope="col">是否啟用</th>
-                                    <th scope="col">查看細節</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                {products.map(item => (
-                                    <tr key={item.id} className="align-middle">
-                                        <th scope="row">{item.title}</th>
-                                        <td className="text-end">{`${item.origin_price.toLocaleString()}`}</td>
-                                        <td className="text-end">{`${item.price.toLocaleString()}`}</td>
-                                        <td className="text-center">
-                                            {item.is_enabled ? 'Y' : 'N'}
-                                        </td>
-                                        <td className="text-center">
-                                            <button
-                                                type="button"
-                                                className="btn btn-link"
-                                                onClick={() =>
-                                                    setTempProduct(item)
-                                                }
-                                            >
-                                                Link
-                                            </button>
-                                        </td>
-                                    </tr>
-                                ))}
-                            </tbody>
-                        </table>
-                    </div>
-                    <div className="col-md-6">
-                        <ProductDetail tempProduct={tempProduct} />
-                    </div>
+            <div className="container-fluid my-3">
+                <div className="d-flex justify-content-between align-items-center my-4">
+                    <h2 className="m-0">產品列表</h2>
+                    <button
+                        type="button"
+                        className="btn btn-primary"
+                        onClick={() => openModal({}, 'create')}
+                    >
+                        新增產品
+                    </button>
                 </div>
+                <ProductTable
+                    tableHeader={tableHeader}
+                    products={products}
+                    openModal={openModal}
+                    pagination={pagination}
+                    setProducts={setProducts}
+                    前頁碼
+                />
+
+                <Pagination
+                    pagination={pagination}
+                    setProducts={setProducts}
+                />
             </div>
+            <ProductModal
+                modalType={modalType}
+                closeModal={closeModal}
+                templateData={templateData}
+                handleProduct={handleProduct}
+                setTemplateData={setTemplateData}
+            />
         </>
     );
-}
+};
 
 export default ProductList;

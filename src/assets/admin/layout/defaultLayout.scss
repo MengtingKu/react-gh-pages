@@ -1,0 +1,15 @@
+@import "./sidebar.scss";
+@import "./navbar.scss";
+@import "./footer.scss";
+
+.layout {
+    display: flex;
+
+    .content {
+        width: 100%;
+        height: 100vh;
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
+    }
+}

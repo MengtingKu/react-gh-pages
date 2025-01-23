@@ -1,5 +1,7 @@
+import PropTypes from 'prop-types';
+
 function Loading({ status }) {
-    if (! status) return null;
+    if (!status) return null;
 
     return (
         <>
@@ -10,5 +12,9 @@ function Loading({ status }) {
         </>
     );
 }
+
+Loading.propTypes = {
+    status: PropTypes.bool.isRequired,
+};
 
 export default Loading;
