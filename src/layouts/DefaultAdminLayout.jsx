@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import PropTypes from 'prop-types';
 
 import ProductList from '@pages/admin/ProductList';
 import ProductPage from '@pages/admin/ProductPage';
@@ -8,7 +9,7 @@ import Sidebar from '@layouts/Sidebar';
 import Content from '@layouts/Content';
 import LoginForm from '@pages/admin/LoginForm';
 
-const DefaultLayout = () => {
+const DefaultLayout = ({ setIsAuth }) => {
     const [selectedTab, setSelectedTab] = useState('products');
 
     const renderContent = () => {
@@ -17,8 +18,6 @@ const DefaultLayout = () => {
                 return <ProductPage />;
             case 'productList':
                 return <ProductList />;
-            case 'logout':
-                return <LoginForm setIsAuth={false} />;
             default:
                 return <ProductList />;
         }
@@ -27,7 +26,7 @@ const DefaultLayout = () => {
     return (
         <>
             {selectedTab === 'logout' ? (
-                <LoginForm setIsAuth={false} />
+                <LoginForm setIsAuth={setIsAuth} />
             ) : (
                 <>
                     <Navbar />
@@ -42,6 +41,10 @@ const DefaultLayout = () => {
             )}
         </>
     );
+};
+
+DefaultLayout.propTypes = {
+    setIsAuth: PropTypes.func,
 };
 
 export default DefaultLayout;

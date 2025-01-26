@@ -1,10 +1,8 @@
 const Footer = () => {
     return (
-        <>
-            <footer className="footer">
-                <small>©2025 React Admin Demo</small>
-            </footer>
-        </>
+        <footer className="footer">
+            <small>©2025 React Admin Demo</small>
+        </footer>
     );
 };
 

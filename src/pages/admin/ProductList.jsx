@@ -109,6 +109,7 @@ const ProductList = () => {
 
                 <Pagination
                     pagination={pagination}
+                    setPagination={setPagination}
                     setProducts={setProducts}
                 />
             </div>

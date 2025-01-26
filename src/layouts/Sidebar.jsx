@@ -36,18 +36,17 @@ const Sidebar = ({ setSelectedTab }) => {
             isToggle: false,
             className: 'sidebarItem',
         },
-        {
-            key: 'logout',
-            icon: 'right-from-bracket',
-            tooltip: '登出',
-            onClick: () => {
-                setSelectedTab('logout');
-                document.cookie =
-                    'reactToken=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;';
-            },
-            isToggle: false,
-            className: 'sidebarItem mb-3',
-        },
+        // {
+        //     key: 'logout',
+        //     icon: 'right-from-bracket',
+        //     tooltip: '登出',
+        //     onClick: () => {
+        //         document.cookie =
+        //             'reactToken=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;';
+        //     },
+        //     isToggle: false,
+        //     className: 'sidebarItem mb-3',
+        // },
     ];
 
     useEffect(() => {
@@ -64,26 +63,22 @@ const Sidebar = ({ setSelectedTab }) => {
     }, [isOpenSidebar]);
 
     return (
-        <>
-            <aside className="sidebar">
-                <ul className="fixedSidebar">
-                    {sidebarItems.map(item => {
-                        return (
-                            <>
-                                <li
-                                    key={item.key}
-                                    className={item.className}
-                                    data-tooltip={item.tooltip}
-                                    onClick={item.onClick}
-                                >
-                                    <FontAwesomeIcon icon={item.icon} />
-                                </li>
-                            </>
-                        );
-                    })}
-                </ul>
-            </aside>
-        </>
+        <aside className="sidebar">
+            <ul className="fixedSidebar">
+                {sidebarItems.map(item => {
+                    return (
+                        <li
+                            key={item.key}
+                            className={item.className}
+                            data-tooltip={item.tooltip}
+                            onClick={item.onClick}
+                        >
+                            <FontAwesomeIcon icon={item.icon} />
+                        </li>
+                    );
+                })}
+            </ul>
+        </aside>
     );
 };
 

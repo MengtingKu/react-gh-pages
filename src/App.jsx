@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react';
 import axios from 'axios';
 
 import LoginForm from '@pages/admin/LoginForm';
-import DefaultLayout from '@layouts/DefaultLayout';
+import DefaultAdminLayout from '@layouts/DefaultAdminLayout';
 
 const { VITE_BASE_URL: baseUrl } = import.meta.env;
 
@@ -30,7 +30,14 @@ function App() {
     }, []);
 
     return (
-        <> {isAuth ? <DefaultLayout /> : <LoginForm setIsAuth={setIsAuth} />}</>
+        <>
+            {' '}
+            {isAuth ? (
+                <DefaultAdminLayout setIsAuth={setIsAuth} />
+            ) : (
+                <LoginForm setIsAuth={setIsAuth} />
+            )}
+        </>
     );
 }
 

@@ -58,7 +58,7 @@ const LoginForm = ({ setIsAuth }) => {
                                 帳號 UserName
                             </label>
                             <input
-                                type="text"
+                                type="email"
                                 className="form-control form_input"
                                 id="username"
                                 name="username"
