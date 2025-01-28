@@ -3,7 +3,7 @@ import axios from 'axios';
 
 const { VITE_BASE_URL: baseUrl, VITE_APP_PATH: apiPath } = import.meta.env;
 
-const useAdminProductApi = () => {
+const useProductApi = () => {
     const [isLoading, setIsLoading] = useState(false);
 
     const getProductList = useCallback(async (page = 1) => {
@@ -96,4 +96,4 @@ const useAdminProductApi = () => {
     };
 };
 
-export default useAdminProductApi;
+export default useProductApi;

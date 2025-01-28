@@ -1,9 +1,9 @@
 import { useState, useEffect } from 'react';
-import useAdminProductApi from '@hook/useAdminProductApi';
+import useProductApi from '@hook/admin/useProductApi';
 
 import Loading from '@components/common/Loading';
-import ProductModal from '@components/common/ProductModal';
-import ProductTable from '@components/ProductTable';
+import ProductModal from '@components/admin/ProductModal';
+import ProductTable from '@components/admin/ProductTable';
 import Pagination from '@components/common/Pagination';
 
 const defaultTemplateData = {
@@ -34,7 +34,7 @@ const ProductList = () => {
         createProduct,
         updateProduct,
         deleteProduct,
-    } = useAdminProductApi();
+    } = useProductApi();
 
     useEffect(() => {
         const fetchProducts = async () => {
@@ -104,7 +104,6 @@ const ProductList = () => {
                     openModal={openModal}
                     pagination={pagination}
                     setProducts={setProducts}
-                    前頁碼
                 />
 
                 <Pagination

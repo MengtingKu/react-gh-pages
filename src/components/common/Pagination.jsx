@@ -1,10 +1,10 @@
 import PropTypes from 'prop-types';
-import useAdminProductApi from '@hook/useAdminProductApi';
+import useProductApi from '@hook/admin/useProductApi';
 import { useState } from 'react';
 
 const Pagination = ({ pagination, setPagination, setProducts }) => {
     const [loading, setLoading] = useState(false);
-    const { getProductList } = useAdminProductApi();
+    const { getProductList } = useProductApi();
 
     const handlePageChange = async (page, e) => {
         e.preventDefault();

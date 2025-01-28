@@ -1,13 +1,13 @@
 import { useState, useEffect } from 'react';
-import useAdminProductApi from '@hook/useAdminProductApi';
+import useProductApi from '@hook/admin/useProductApi';
 
-import ProductDetail from '@components/ProductDetail';
+import ProductDetail from '@components/admin/ProductDetail';
 import Loading from '@components/common/Loading';
 
 const ProductPage = () => {
     const [tempProduct, setTempProduct] = useState(null);
     const [products, setProducts] = useState([]);
-    const { isLoading, getProductList } = useAdminProductApi();
+    const { isLoading, getProductList } = useProductApi();
 
     useEffect(() => {
         const fetchProducts = async () => {
