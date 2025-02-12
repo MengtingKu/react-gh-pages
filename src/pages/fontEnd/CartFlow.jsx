@@ -201,17 +201,28 @@ const CartFlow = () => {
     }, [getCart]);
 
     return (
-        <div className="container">
+        <div
+            className="container"
+            style={
+                isCartLoading || isLoading
+                    ? {
+                          width: '100vw',
+                          height: '100vh',
+                          overflow: 'hidden',
+                      }
+                    : {}
+            }
+        >
             {/* 全面 loading */}
             {(isCartLoading || isLoading) && (
                 <div
                     className="d-flex justify-content-center align-items-center"
                     style={{
-                        position: 'fixed',
+                        position: 'absolute',
                         top: 0,
                         left: 0,
                         width: '100vw',
-                        height: '200vh',
+                        height: '100vh',
                         backgroundColor: 'rgba(255,255,255,0.3)',
                         zIndex: 999,
                     }}

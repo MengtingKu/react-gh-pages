@@ -40,6 +40,10 @@ const ProductModal = ({
         setSelectItemNum(1);
     };
 
+    const closeModal = () => {
+        setIsOpenModal(false);
+    };
+
     return (
         <div
             ref={modalRef}
@@ -58,7 +62,8 @@ const ProductModal = ({
                             className="btn-close"
                             data-bs-dismiss="modal"
                             aria-label="Close"
-                        ></button>
+                            onClick={() => closeModal()}
+                        />
                     </div>
                     <div className="modal-body">
                         <img
@@ -100,7 +105,7 @@ const ProductModal = ({
                             type="button"
                             className="btn btn-secondary"
                             data-bs-dismiss="modal"
-                            onClick={() => modalInstance.current.hide()}
+                            onClick={() => closeModal()}
                             disabled={loading}
                         >
                             取消
