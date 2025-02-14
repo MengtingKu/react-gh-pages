@@ -1,6 +1,14 @@
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { NavLink } from 'react-router-dom';
 
 const Navbar = () => {
+    const routes = [
+        { path: '/', name: 'Home' },
+        { path: '/products', name: 'Products' },
+        { path: '/carts', name: 'Carts' },
+        { path: '/login', name: 'Admin' },
+    ];
+
     return (
         <nav className="sticky-md-top navbar_style">
             <nav className="navbar navbar-expand-lg bg-body-tertiary">
@@ -18,40 +26,26 @@ const Navbar = () => {
                         aria-expanded="false"
                         aria-label="Toggle navigation"
                     >
-                        <span className="navbar-toggler-icon"></span>
+                        <span className="navbar-toggler-icon" />
                     </button>
                     <div
                         className="collapse navbar-collapse justify-content-end"
                         id="navbarNav"
                     >
                         <ul className="navbar-nav">
-                            <li className="nav-item">
-                                <a
-                                    className="nav-link active"
-                                    aria-current="page"
-                                    href="#"
-                                >
-                                    Home
-                                </a>
-                            </li>
-                            <li className="nav-item">
-                                <a className="nav-link" href="#">
-                                    Features
-                                </a>
-                            </li>
-                            <li className="nav-item">
-                                <a className="nav-link" href="#">
-                                    Pricing
-                                </a>
-                            </li>
-                            <li className="nav-item">
-                                <a
-                                    className="nav-link disabled"
-                                    aria-disabled="true"
-                                >
-                                    Disabled
-                                </a>
-                            </li>
+                            {routes.map(route => {
+                                return (
+                                    <li className="nav-item" key={route.name}>
+                                        <NavLink
+                                            className="nav-link"
+                                            aria-current="page"
+                                            to={route.path}
+                                        >
+                                            {route.name}
+                                        </NavLink>
+                                    </li>
+                                );
+                            })}
                         </ul>
                     </div>
                 </div>

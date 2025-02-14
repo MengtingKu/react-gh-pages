@@ -1,4 +1,8 @@
 .sidebar {
+    a {
+        color: $gray-600;
+    }
+
     .fixedSidebar {
         position: fixed;
         z-index: 99;
@@ -37,9 +41,15 @@
             transition: 0.25s;
 
             &:hover {
-                transform: scale(1.1);
+                transform: scale(1.2);
                 cursor: pointer;
             }
+        }
+
+        .active {
+            color: $black;
+            font-size: 1.2rem;
+            filter: drop-shadow(2px 2px 2px rgba($gray-500, 0.7));
         }
 
         .buttonTrigger {
@@ -73,7 +83,7 @@
                 display: block;
                 padding: 7px;
                 text-align: center;
-                font-size: 0.8 rem;
+                font-size: 0.8rem;
                 white-space: nowrap;
                 color: $white;
                 border-radius: 5px;

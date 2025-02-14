@@ -1,13 +1,15 @@
 import { useEffect, useState } from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import PropTypes from 'prop-types';
+import { NavLink } from 'react-router-dom';
 
-const Sidebar = ({ setSelectedTab }) => {
+const Sidebar = () => {
     const [isOpenSidebar, setIsOpenSidebar] = useState(false);
+    const [path, setPath] = useState('/admin/products');
 
     const sidebarItems = [
         {
             key: 'sidebarToggle',
+            path: { path },
             icon: 'angle-left',
             tooltip: 'Hide',
             onClick: () => setIsOpenSidebar(!isOpenSidebar),
@@ -16,10 +18,11 @@ const Sidebar = ({ setSelectedTab }) => {
         },
         {
             key: 'productPage',
+            path: '/admin/products',
             icon: 'circle-info',
             tooltip: '產品明細',
             onClick: () => {
-                setSelectedTab('productPage');
+                setPath('/admin/products');
                 setIsOpenSidebar(false);
             },
             isToggle: false,
@@ -27,26 +30,28 @@ const Sidebar = ({ setSelectedTab }) => {
         },
         {
             key: 'productList',
+            path: '/admin/product-list',
             icon: 'table-list',
             tooltip: '產品列表',
             onClick: () => {
-                setSelectedTab('productList');
+                setPath('/admin/product-list');
                 setIsOpenSidebar(false);
             },
             isToggle: false,
             className: 'sidebarItem',
         },
-        // {
-        //     key: 'logout',
-        //     icon: 'right-from-bracket',
-        //     tooltip: '登出',
-        //     onClick: () => {
-        //         document.cookie =
-        //             'reactToken=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;';
-        //     },
-        //     isToggle: false,
-        //     className: 'sidebarItem mb-3',
-        // },
+        {
+            key: 'logout',
+            path: '/',
+            icon: 'right-from-bracket',
+            tooltip: '登出',
+            onClick: () => {
+                document.cookie =
+                    'reactToken=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;';
+            },
+            isToggle: false,
+            className: 'sidebarItem mb-3',
+        },
     ];
 
     useEffect(() => {
@@ -65,6 +70,7 @@ const Sidebar = ({ setSelectedTab }) => {
     return (
         <aside className="sidebar">
             <ul className="fixedSidebar">
+                {/* <li className="buttonTrigger" data-tooltip='Hide'></li> */}
                 {sidebarItems.map(item => {
                     return (
                         <li
@@ -73,17 +79,26 @@ const Sidebar = ({ setSelectedTab }) => {
                             data-tooltip={item.tooltip}
                             onClick={item.onClick}
                         >
-                            <FontAwesomeIcon icon={item.icon} />
+                            {item.key === 'sidebarToggle' ? (
+                                <FontAwesomeIcon icon={item.icon} />
+                            ) : (
+                                <NavLink
+                                    className={({ isActive }) => {
+                                        return `nav-link ${
+                                            isActive ? 'active' : ''
+                                        }`;
+                                    }}
+                                    to={item.path}
+                                >
+                                    <FontAwesomeIcon icon={item.icon} />
+                                </NavLink>
+                            )}
                         </li>
                     );
                 })}
             </ul>
         </aside>
     );
-};
-
-Sidebar.propTypes = {
-    setSelectedTab: PropTypes.func,
 };
 
 export default Sidebar;

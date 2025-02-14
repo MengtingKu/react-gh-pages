@@ -1,6 +1,6 @@
 import PropTypes from 'prop-types';
 import { useForm } from 'react-hook-form';
-import useOrderApi from '@hook/fontEnd/useOrderApi';
+import useOrderApi from '@hook/front/useOrderApi';
 
 const OrderForm = ({ refreshCart }) => {
     const { postOrder } = useOrderApi();

@@ -1,7 +1,13 @@
+/* eslint-disable no-useless-escape */
 import { useState, useCallback } from 'react';
 import axios from 'axios';
 
 const { VITE_BASE_URL: baseUrl, VITE_APP_PATH: apiPath } = import.meta.env;
+const token = document.cookie.replace(
+    /(?:(?:^|.*;\s*)reactToken\s*\=\s*([^;]*).*$)|^.*$/,
+    '$1'
+);
+axios.defaults.headers.common.Authorization = token;
 
 const useProductApi = () => {
     const [isLoading, setIsLoading] = useState(false);

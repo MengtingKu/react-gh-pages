@@ -1,6 +1,7 @@
 import axios from 'axios';
 import PropTypes from 'prop-types';
 import { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import Loading from '@components/common/Loading';
 
 const { VITE_BASE_URL: baseUrl } = import.meta.env;
@@ -11,6 +12,7 @@ const LoginForm = ({ setIsAuth }) => {
         username: '',
         password: '',
     });
+    const navigate = useNavigate();
 
     const btnDisabled = !account.username || !account.password;
 
@@ -36,6 +38,7 @@ const LoginForm = ({ setIsAuth }) => {
             axios.defaults.headers.common.Authorization = token;
 
             setIsAuth(true);
+            navigate('/admin/product-list');
         } catch (error) {
             alert(error?.response.data.error.message);
         } finally {

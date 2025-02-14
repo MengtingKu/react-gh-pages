@@ -48,6 +48,18 @@ export default defineConfig({
                     new URL('./src/utils', import.meta.url)
                 ),
             },
+            {
+                find: '@routes',
+                replacement: fileURLToPath(
+                    new URL('./src/routes', import.meta.url)
+                ),
+            },
+            {
+                find: '@slice',
+                replacement: fileURLToPath(
+                    new URL('./src/slice', import.meta.url)
+                ),
+            },
         ],
     },
 });

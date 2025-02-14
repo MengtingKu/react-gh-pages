@@ -1,85 +1,19 @@
-import { useEffect, useState } from 'react';
+import { useEffect } from 'react';
 import ReactLoading from 'react-loading';
-import useProductApi from '@hook/fontEnd/useProductApi';
-import useCartApi from '@hook/fontEnd/useCartApi';
-
+import useCartApi from '@hook/front/useCartApi';
 import DynamicTable from '@components/common/DynamicTable';
-import ProductModal from '@components/fontEnd/cartFlow/ProductModal';
-import OrderForm from '@components/fontEnd/cartFlow/OrderForm';
+import OrderForm from '@components/front/cartFlow/OrderForm';
 
-const CartFlow = () => {
-    const [isOpenModal, setIsOpenModal] = useState(false);
-    const [templateData, setTemplateData] = useState({});
-    const [loadingCartId, setLoadingCartId] = useState(null);
-    const { isLoading, products, getProductsAll } = useProductApi();
-
+const CartsPage = () => {
     const {
         isCartLoading,
         cart,
         getCart,
-        postCart,
         putCartItem,
         deleteCartItem,
         deleteCarts,
     } = useCartApi();
 
-    const openModal = product => {
-        setIsOpenModal(true);
-        setTemplateData(product);
-    };
-
-    // 產品列表
-    const productFields = [
-        {
-            key: 'imageUrl',
-            name: '圖片',
-            class: 'text-center',
-            type: 'img',
-            width: '200px',
-        },
-        { key: 'title', name: '商品名稱', class: 'text-start', type: 'text' },
-        {
-            key: 'price, origin_price',
-            name: '價格',
-            class: 'text-end',
-            type: 'custom',
-            render: product => {
-                return (
-                    <div>
-                        <div className="h5">
-                            {product.price.toLocaleString()}
-                        </div>
-                        {product.origin_price && (
-                            <del className="h6">
-                                原價 {product.origin_price.toLocaleString()}
-                            </del>
-                        )}
-                    </div>
-                );
-            },
-        },
-    ];
-    const productActions = [
-        {
-            label: '查看詳情',
-            class: 'btn btn-outline-secondary',
-            handler: product => {
-                openModal(product);
-            },
-        },
-        {
-            label: '加入購物車',
-            class: 'btn btn-outline-danger',
-            disabled: productId => loadingCartId === productId,
-            handler: async product => {
-                setLoadingCartId(product.id);
-                await postCart(product.id);
-                setLoadingCartId(null);
-            },
-        },
-    ];
-
-    // 購物車列表
     const cartFields = [
         {
             key: 'product_title',
@@ -185,14 +119,6 @@ const CartFlow = () => {
     const clearCart = async () => await deleteCarts();
 
     useEffect(() => {
-        const fetchProducts = async () => {
-            await getProductsAll();
-        };
-
-        fetchProducts();
-    }, [getProductsAll]);
-
-    useEffect(() => {
         const fetchCart = async () => {
             await getCart();
         };
@@ -204,7 +130,7 @@ const CartFlow = () => {
         <div
             className="container"
             style={
-                isCartLoading || isLoading
+                isCartLoading
                     ? {
                           width: '100vw',
                           height: '100vh',
@@ -214,7 +140,7 @@ const CartFlow = () => {
             }
         >
             {/* 全面 loading */}
-            {(isCartLoading || isLoading) && (
+            {isCartLoading && (
                 <div
                     className="d-flex justify-content-center align-items-center"
                     style={{
@@ -235,24 +161,6 @@ const CartFlow = () => {
                     />
                 </div>
             )}
-
-            {/* 彈窗 */}
-            <ProductModal
-                product={templateData}
-                isOpenModal={isOpenModal}
-                setIsOpenModal={setIsOpenModal}
-                action={postCart}
-                loading={isCartLoading}
-            />
-
-            {/* 產品列表 */}
-            <DynamicTable
-                data={products}
-                fields={productFields}
-                endActions={productActions}
-            />
-            <hr />
-
             {/* 訂單列表 */}
             {cart.total === 0 ? (
                 <div className="text-center my-3">
@@ -292,4 +200,4 @@ const CartFlow = () => {
     );
 };
 
-export default CartFlow;
+export default CartsPage;

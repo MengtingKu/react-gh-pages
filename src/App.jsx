@@ -1,37 +1,37 @@
-import { useState, useEffect } from 'react';
+/* eslint-disable no-useless-escape */
+import { useState, useEffect, useCallback } from 'react';
+import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 
 import LoginForm from '@pages/admin/LoginForm';
 import DefaultAdminLayout from '@layouts/DefaultAdminLayout';
-import CartFlow from '@pages/fontEnd/CartFlow';
 
 const { VITE_BASE_URL: baseUrl } = import.meta.env;
 
 function App() {
     const [isAuth, setIsAuth] = useState(false);
-    const isAdmin = false;
+    const navigate = useNavigate();
 
-    const checkLogin = async () => {
+    const checkLogin = useCallback(async () => {
         try {
             await axios.post(`${baseUrl}/api/user/check`);
             setIsAuth(true);
+            navigate('/admin/product-list');
         } catch (error) {
-            alert(error?.response.data.message);
+            console.log('登入驗證錯誤 =>', error?.response.data.message);
+            navigate('/login');
         }
-    };
+    }, [navigate]);
 
     useEffect(() => {
-        if (isAdmin) {
-            const token = document.cookie.replace(
-                // eslint-disable-next-line no-useless-escape
-                /(?:(?:^|.*;\s*)reactToken\s*\=\s*([^;]*).*$)|^.*$/,
-                '$1'
-            );
-            axios.defaults.headers.common.Authorization = token;
+        const token = document.cookie.replace(
+            /(?:(?:^|.*;\s*)reactToken\s*\=\s*([^;]*).*$)|^.*$/,
+            '$1'
+        );
+        axios.defaults.headers.common.Authorization = token;
 
-            checkLogin();
-        }
-    }, [isAdmin]);
+        checkLogin();
+    }, [checkLogin]);
 
     const renderAdmin = () => {
         return (
@@ -45,7 +45,7 @@ function App() {
         );
     };
 
-    return <>{isAdmin ? renderAdmin() : <CartFlow />}</>;
+    return <>{renderAdmin()}</>;
 }
 
 export default App;
