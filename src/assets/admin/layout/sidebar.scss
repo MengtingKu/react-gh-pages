@@ -3,7 +3,7 @@
         color: $gray-600;
     }
 
-    .fixedSidebar {
+    .fixed_sidebar {
         position: fixed;
         z-index: 99;
         top: 50%;
@@ -30,7 +30,7 @@
             left: -75px;
         }
 
-        .sidebarItem {
+        .sidebar_item {
             position: relative;
             z-index: 10;
             display: inline-block;
@@ -52,7 +52,7 @@
             filter: drop-shadow(2px 2px 2px rgba($gray-500, 0.7));
         }
 
-        .buttonTrigger {
+        .button_trigger {
             display: inline-block;
             text-align: center;
             width: 100%;
@@ -71,6 +71,10 @@
                     content: "Show";
                 }
             }
+        }
+
+        .transform_btn {
+            color: $gray-600;
         }
 
         [data-tooltip] {

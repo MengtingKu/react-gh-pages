@@ -1,20 +1,19 @@
 import { useEffect, useState } from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { NavLink } from 'react-router-dom';
+import { NavLink, useNavigate } from 'react-router-dom';
 
 const Sidebar = () => {
     const [isOpenSidebar, setIsOpenSidebar] = useState(false);
-    const [path, setPath] = useState('/admin/products');
+    const navigate = useNavigate();
 
     const sidebarItems = [
         {
             key: 'sidebarToggle',
-            path: { path },
             icon: 'angle-left',
             tooltip: 'Hide',
             onClick: () => setIsOpenSidebar(!isOpenSidebar),
             isToggle: true,
-            className: 'buttonTrigger',
+            className: 'button_trigger transform_btn',
         },
         {
             key: 'productPage',
@@ -22,11 +21,10 @@ const Sidebar = () => {
             icon: 'circle-info',
             tooltip: '產品明細',
             onClick: () => {
-                setPath('/admin/products');
                 setIsOpenSidebar(false);
             },
             isToggle: false,
-            className: 'sidebarItem',
+            className: 'sidebar_item',
         },
         {
             key: 'productList',
@@ -34,29 +32,28 @@ const Sidebar = () => {
             icon: 'table-list',
             tooltip: '產品列表',
             onClick: () => {
-                setPath('/admin/product-list');
                 setIsOpenSidebar(false);
             },
             isToggle: false,
-            className: 'sidebarItem',
+            className: 'sidebar_item',
         },
         {
             key: 'logout',
-            path: '/',
             icon: 'right-from-bracket',
             tooltip: '登出',
             onClick: () => {
                 document.cookie =
                     'reactToken=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;';
+                navigate('/');
             },
             isToggle: false,
-            className: 'sidebarItem mb-3',
+            className: 'sidebar_item mb-3 transform_btn',
         },
     ];
 
     useEffect(() => {
-        const sidebarElement = document.querySelector('.fixedSidebar');
-        const buttonTrigger = document.querySelector('.buttonTrigger');
+        const sidebarElement = document.querySelector('.fixed_sidebar');
+        const buttonTrigger = document.querySelector('.button_trigger');
 
         if (isOpenSidebar) {
             sidebarElement.classList.remove('active');
@@ -69,8 +66,7 @@ const Sidebar = () => {
 
     return (
         <aside className="sidebar">
-            <ul className="fixedSidebar">
-                {/* <li className="buttonTrigger" data-tooltip='Hide'></li> */}
+            <ul className="fixed_sidebar">
                 {sidebarItems.map(item => {
                     return (
                         <li
@@ -79,9 +75,7 @@ const Sidebar = () => {
                             data-tooltip={item.tooltip}
                             onClick={item.onClick}
                         >
-                            {item.key === 'sidebarToggle' ? (
-                                <FontAwesomeIcon icon={item.icon} />
-                            ) : (
+                            {item.path ? (
                                 <NavLink
                                     className={({ isActive }) => {
                                         return `nav-link ${
@@ -92,6 +86,8 @@ const Sidebar = () => {
                                 >
                                     <FontAwesomeIcon icon={item.icon} />
                                 </NavLink>
+                            ) : (
+                                <FontAwesomeIcon icon={item.icon} />
                             )}
                         </li>
                     );
