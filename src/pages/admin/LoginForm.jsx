@@ -2,6 +2,8 @@ import axios from 'axios';
 import PropTypes from 'prop-types';
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { useDispatch } from 'react-redux';
+import { createAsyncMessage } from '@slice/messageSlice';
 import Loading from '@components/common/Loading';
 
 const { VITE_BASE_URL: baseUrl } = import.meta.env;
@@ -13,6 +15,7 @@ const LoginForm = ({ setIsAuth }) => {
         password: '',
     });
     const navigate = useNavigate();
+    const dispatch = useDispatch();
 
     const btnDisabled = !account.username || !account.password;
 
@@ -38,9 +41,20 @@ const LoginForm = ({ setIsAuth }) => {
             axios.defaults.headers.common.Authorization = token;
 
             setIsAuth(true);
+            dispatch(
+                createAsyncMessage({
+                    message: `${res.data.message}，歡迎回來`,
+                    success: res.data.success,
+                })
+            );
             navigate('/admin/product-list');
         } catch (error) {
-            alert(error?.response.data.error.message);
+            dispatch(
+                createAsyncMessage({
+                    message: error.response?.data?.message,
+                    success: error.response?.data?.success,
+                })
+            );
         } finally {
             setIsLoading(false);
         }

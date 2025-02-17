@@ -6,6 +6,9 @@ import {
     faTableList,
     faCircleInfo,
     faRightFromBracket,
+    faCircleCheck,
+    faCircleXmark,
+    faTrashCan
 } from '@fortawesome/free-solid-svg-icons';
 import { library } from '@fortawesome/fontawesome-svg-core';
 
@@ -16,7 +19,10 @@ library.add(
     faAngleLeft,
     faTableList,
     faCircleInfo,
-    faRightFromBracket
+    faRightFromBracket,
+    faCircleCheck,
+    faCircleXmark,
+    faTrashCan
 );
 
 export { library };

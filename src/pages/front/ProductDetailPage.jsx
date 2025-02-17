@@ -1,25 +1,34 @@
 import { useEffect, useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { usePreviousDistinct } from 'react-use';
+import { useDispatch } from 'react-redux';
 
 import ReactLoading from 'react-loading';
 import useProductApi from '@hook/front/useProductApi';
 import useCartApi from '@hook/front/useCartApi';
+import { createAsyncMessage } from '@slice/messageSlice';
 
 const ProductDetailPage = () => {
     const { id } = useParams();
     const navigate = useNavigate();
+    const dispatch = useDispatch();
+
     const { isLoading, getProductById, productDetail } = useProductApi();
     const prevId = usePreviousDistinct(id);
     const [selectItemNum, setSelectItemNum] = useState(1);
-    const { isCartLoading, postCart } = useCartApi();
+    const { isCartLoading, postCart, message } = useCartApi();
 
     useEffect(() => {
         if (id && id !== prevId) {
             getProductById(id);
         }
     }, [id, getProductById, prevId]);
-    
+
+    useEffect(() => {
+        if (message) {
+            dispatch(createAsyncMessage(message));
+        }
+    }, [message, dispatch]);
 
     return (
         <div
@@ -107,7 +116,10 @@ const ProductDetailPage = () => {
                                             type="button"
                                             className="btn btn-primary"
                                             onClick={() =>
-                                                postCart(productDetail?.id, selectItemNum)
+                                                postCart(
+                                                    productDetail?.id,
+                                                    selectItemNum
+                                                )
                                             }
                                             disabled={isCartLoading}
                                         >

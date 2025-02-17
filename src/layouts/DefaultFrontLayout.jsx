@@ -1,11 +1,13 @@
+import { Outlet } from 'react-router-dom';
 import Navbar from '@layouts/Navbar';
 import Footer from '@layouts/Footer';
-import { Outlet } from 'react-router-dom';
+import MessageToast from '@components/common/MessageToast';
 
 const DefaultFrontLayout = () => {
     return (
         <>
             <Navbar />
+            <MessageToast />
             <Outlet />
             <Footer />
         </>

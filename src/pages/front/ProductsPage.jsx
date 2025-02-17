@@ -1,17 +1,20 @@
 import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { useDispatch } from 'react-redux';
 import ReactLoading from 'react-loading';
 
 import DynamicTable from '@components/common/DynamicTable';
 import useProductApi from '@hook/front/useProductApi';
 import useCartApi from '@hook/front/useCartApi';
+import { createAsyncMessage } from '@slice/messageSlice';
 
 const ProductsPage = () => {
     const [loadingCartId, setLoadingCartId] = useState(null);
     const { isLoading, products, getProductsAll } = useProductApi();
     const navigate = useNavigate();
+    const dispatch = useDispatch();
 
-    const { isCartLoading, postCart } = useCartApi();
+    const { isCartLoading, message, postCart } = useCartApi();
 
     // 產品列表
     const productFields = [
@@ -50,7 +53,6 @@ const ProductsPage = () => {
             class: 'btn btn-outline-secondary',
             handler: product => {
                 navigate(`/products/${product.id}`);
-                // openModal(product);
             },
         },
         {
@@ -68,6 +70,12 @@ const ProductsPage = () => {
     useEffect(() => {
         getProductsAll();
     }, [getProductsAll]);
+
+    useEffect(() => {
+        if (message) {
+            dispatch(createAsyncMessage(message));
+        }
+    }, [message, dispatch]);
 
     return (
         <div

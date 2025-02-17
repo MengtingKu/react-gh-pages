@@ -1,14 +1,38 @@
-import { useState, useCallback } from 'react';
+import { useReducer, useCallback } from 'react';
 import axios from 'axios';
 
 const { VITE_BASE_URL: baseUrl, VITE_APP_PATH: apiPath } = import.meta.env;
 
+const initialState = {
+    isCartLoading: false,
+    cart: { carts: [] },
+    message: null,
+};
+
+const cartReducer = (state, action) => {
+    switch (action.type) {
+        case 'SET_LOADING':
+            return { ...state, isCartLoading: action.payload };
+        case 'SET_CART':
+            return { ...state, cart: action.payload };
+        case 'SET_MESSAGE':
+            return { ...state, message: action.payload };
+        default:
+            return state;
+    }
+};
+
+const errorInfo = error => ({
+    message: error.response?.data?.message,
+    success: error.response?.data?.success,
+});
+
 const useCartApi = () => {
-    const [isCartLoading, setIsCartLoading] = useState(false);
-    const [cart, setCart] = useState({ carts: [] });
+    const [state, dispatch] = useReducer(cartReducer, initialState);
 
     const getCart = useCallback(async () => {
-        setIsCartLoading(true);
+        dispatch({ type: 'SET_LOADING', payload: true });
+
         const url = `${baseUrl}/api/${apiPath}/cart`;
 
         try {
@@ -18,93 +42,129 @@ const useCartApi = () => {
                 for (const [key, value] of Object.entries(item.product)) {
                     flatItem[`product_${key}`] = value;
                 }
-
                 return flatItem;
             });
 
-            setCart(prevCart => ({
-                ...prevCart,
-                ...res.data.data,
-                carts: CartTableData,
-            }));
+            dispatch({
+                type: 'SET_CART',
+                payload: { ...res.data.data, carts: CartTableData },
+            });
         } catch (error) {
-            alert(error.response.data.message || '取得購物車列表失敗');
+            dispatch({
+                type: 'SET_MESSAGE',
+                payload: errorInfo(error),
+            });
         } finally {
-            setIsCartLoading(false);
+            dispatch({ type: 'SET_LOADING', payload: false });
         }
     }, []);
 
     const postCart = async (product_id, qty = 1) => {
-        setIsCartLoading(true);
+        dispatch({ type: 'SET_LOADING', payload: true });
+
         const url = `${baseUrl}/api/${apiPath}/cart`;
-        const body = {
-            data: { product_id, qty },
-        };
+        const body = { data: { product_id, qty } };
 
         try {
             const res = await axios.post(url, body);
             await getCart();
-            alert(res.data.message);
+            dispatch({
+                type: 'SET_MESSAGE',
+                payload: {
+                    message: res.data.message,
+                    success: res.data.success,
+                },
+            });
         } catch (error) {
-            alert(error?.response?.data?.message || '加入購物車失敗');
-
-            return [];
+            dispatch({
+                type: 'SET_MESSAGE',
+                payload: errorInfo(error),
+            });
         } finally {
-            setIsCartLoading(false);
+            dispatch({ type: 'SET_LOADING', payload: false });
         }
     };
 
     const putCartItem = async (id, product_id, qty) => {
-        setIsCartLoading(true);
+        dispatch({ type: 'SET_LOADING', payload: true });
+
         const url = `${baseUrl}/api/${apiPath}/cart/${id}`;
-        const body = {
-            data: { product_id, qty },
-        };
+        const body = { data: { product_id, qty } };
 
         try {
             const res = await axios.put(url, body);
             await getCart();
-            alert(res.data.message);
+            dispatch({
+                type: 'SET_MESSAGE',
+                payload: {
+                    message: res.data.message,
+                    success: res.data.success,
+                },
+            });
         } catch (error) {
-            alert(error.response.data.message || '更新購物車失敗');
+            dispatch({
+                type: 'SET_MESSAGE',
+                payload: errorInfo(error),
+            });
         } finally {
-            setIsCartLoading(false);
+            dispatch({ type: 'SET_LOADING', payload: false });
         }
     };
 
     const deleteCartItem = async id => {
-        setIsCartLoading(true);
+        dispatch({ type: 'SET_LOADING', payload: true });
+
         const url = `${baseUrl}/api/${apiPath}/cart/${id}`;
 
         try {
             const res = await axios.delete(url);
             await getCart();
-            alert(res.data.message);
+            dispatch({
+                type: 'SET_MESSAGE',
+                payload: {
+                    message: res.data.message,
+                    success: res.data.success,
+                },
+            });
         } catch (error) {
-            alert(error.response.data.message || '刪除購物車品項失敗');
+            dispatch({
+                type: 'SET_MESSAGE',
+                payload: errorInfo(error),
+            });
         } finally {
-            setIsCartLoading(false);
+            dispatch({ type: 'SET_LOADING', payload: false });
         }
     };
 
     const deleteCarts = async () => {
-        setIsCartLoading(true);
+        dispatch({ type: 'SET_LOADING', payload: true });
+
         const url = `${baseUrl}/api/${apiPath}/carts`;
 
         try {
             const res = await axios.delete(url);
             await getCart();
-            alert(res.data.message);
+            dispatch({
+                type: 'SET_MESSAGE',
+                payload: {
+                    message: res.data.message,
+                    success: res.data.success,
+                },
+            });
         } catch (error) {
-            alert(error.response.data.message || '刪除購物車失敗');
+            dispatch({
+                type: 'SET_MESSAGE',
+                payload: errorInfo(error),
+            });
         } finally {
-            setIsCartLoading(false);
+            dispatch({ type: 'SET_LOADING', payload: false });
         }
     };
 
     return {
-        isCartLoading,
-        cart,
+        isCartLoading: state.isCartLoading,
+        cart: state.cart,
+        message: state.message,
         postCart,
         getCart,
         putCartItem,

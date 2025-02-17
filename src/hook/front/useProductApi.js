@@ -1,65 +1,102 @@
-import { useCallback, useState } from 'react';
+import { useCallback, useReducer } from 'react';
 import axios from 'axios';
 
 const { VITE_BASE_URL: baseUrl, VITE_APP_PATH: apiPath } = import.meta.env;
 
+const initialState = {
+    isLoading: false,
+    products: [],
+    productDetail: null,
+    pagination: {},
+    message: null,
+};
+
+const productReducer = (state, action) => {
+    switch (action.type) {
+        case 'SET_LOADING':
+            return { ...state, isLoading: action.payload };
+        case 'SET_PRODUCTS':
+            return { ...state, products: action.payload };
+        case 'SET_PAGINATION':
+            return { ...state, pagination: action.payload };
+        case 'SET_PRODUCT_DETAIL':
+            return { ...state, productDetail: action.payload };
+        case 'SET_MESSAGE':
+            return { ...state, message: action.payload };
+        default:
+            return state;
+    }
+};
+
+const errorInfo = error => ({
+    message: error.response?.data?.message,
+    success: error.response?.data?.success,
+});
+
 const useProductApi = () => {
-    const [isLoading, setIsLoading] = useState(false);
-    const [products, setProducts] = useState([]);
-    const [productDetail, setProductDetail] = useState(null);
-    const [pagination, setPagination] = useState({});
+    const [state, dispatch] = useReducer(productReducer, initialState);
 
     const getProductsAll = useCallback(async () => {
-        setIsLoading(true);
+        dispatch({ type: 'SET_LOADING', payload: true });
         const url = `${baseUrl}/api/${apiPath}/products/all`;
 
         try {
             const res = await axios.get(url);
-            setProducts(res.data.products);
+            dispatch({ type: 'SET_PRODUCTS', payload: res.data.products });
         } catch (error) {
-            alert(error?.response?.data?.message || '取得產品列表失敗');
-            return [];
+            dispatch({
+                type: 'SET_MESSAGE',
+                payload: errorInfo(error),
+            });
+            dispatch({ type: 'SET_PRODUCTS', payload: [] });
         } finally {
-            setIsLoading(false);
+            dispatch({ type: 'SET_LOADING', payload: false });
         }
     }, []);
 
     const getProducts = useCallback(async (page = 1) => {
-        setIsLoading(true);
+        dispatch({ type: 'SET_LOADING', payload: true });
         const url = `${baseUrl}/api/${apiPath}/products?page=${page}`;
 
         try {
             const res = await axios.get(url);
-            setProducts(res.data.products);
-            setPagination(res.data.pagination);
+            dispatch({ type: 'SET_PRODUCTS', payload: res.data.products });
+            dispatch({ type: 'SET_PAGINATION', payload: res.data.pagination });
         } catch (error) {
-            alert(error?.response?.data?.message || '取得產品列表失敗');
-            return [];
+            dispatch({
+                type: 'SET_MESSAGE',
+                payload: errorInfo(error),
+            });
+            dispatch({ type: 'SET_PRODUCTS', payload: [] });
         } finally {
-            setIsLoading(false);
+            dispatch({ type: 'SET_LOADING', payload: false });
         }
     }, []);
 
     const getProductById = useCallback(async productId => {
-        setIsLoading(true);
+        dispatch({ type: 'SET_LOADING', payload: true });
         const url = `${baseUrl}/api/${apiPath}/product/${productId}`;
 
         try {
             const res = await axios.get(url);
-            setProductDetail(res.data.product);
+            dispatch({ type: 'SET_PRODUCT_DETAIL', payload: res.data.product });
         } catch (error) {
-            alert(error?.response?.data?.message || '取得產品失敗');
-            return [];
+            dispatch({
+                type: 'SET_MESSAGE',
+                payload: errorInfo(error),
+            });
+            dispatch({ type: 'SET_PRODUCTS', payload: [] });
         } finally {
-            setIsLoading(false);
+            dispatch({ type: 'SET_LOADING', payload: false });
         }
     }, []);
 
     return {
-        isLoading,
-        products,
-        productDetail,
-        pagination,
+        isLoading: state.isLoading,
+        products: state.products,
+        productDetail: state.productDetail,
+        pagination: state.pagination,
+        message: state.message,
         getProductsAll,
         getProducts,
         getProductById,

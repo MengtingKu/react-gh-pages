@@ -6,9 +6,13 @@ import { RouterProvider } from 'react-router-dom';
 import './utils/icons.js';
 import './assets/all.scss';
 import router from '@routes';
+import { Provider } from 'react-redux';
+import { store } from '@/store.js';
 
 createRoot(document.getElementById('root')).render(
-    <StrictMode>
-        <RouterProvider router={router} />
-    </StrictMode>
+    <Provider store={store}>
+        <StrictMode>
+            <RouterProvider router={router} />
+        </StrictMode>
+    </Provider>
 );

@@ -1,10 +1,13 @@
 import { useState, useEffect } from 'react';
+import { useDispatch } from 'react-redux';
+
 import useProductApi from '@hook/admin/useProductApi';
 
 import Loading from '@components/common/Loading';
 import ProductModal from '@components/admin/ProductModal';
 import ProductTable from '@components/admin/ProductTable';
 import Pagination from '@components/common/Pagination';
+import { createAsyncMessage } from '@slice/messageSlice';
 
 const defaultTemplateData = {
     id: '',
@@ -27,24 +30,16 @@ const ProductList = () => {
     const [modalType, setModalType] = useState('');
     const [templateData, setTemplateData] = useState(defaultTemplateData);
     const [pagination, setPagination] = useState({});
+    const dispatch = useDispatch();
 
     const {
         isLoading,
+        message,
         getProductList,
         createProduct,
         updateProduct,
         deleteProduct,
     } = useProductApi();
-
-    useEffect(() => {
-        const fetchProducts = async () => {
-            const data = await getProductList();
-            setPagination(data.pagination);
-            setProducts(data.products);
-        };
-
-        fetchProducts();
-    }, [getProductList]);
 
     const openModal = (product, type) => {
         setModalType(type);
@@ -80,6 +75,22 @@ const ProductList = () => {
         const data = await getProductList();
         setProducts(data.products);
     };
+
+    useEffect(() => {
+        const fetchProducts = async () => {
+            const data = await getProductList();
+            setPagination(data.pagination);
+            setProducts(data.products);
+        };
+
+        fetchProducts();
+    }, [getProductList]);
+
+    useEffect(() => {
+        if (message) {
+            dispatch(createAsyncMessage(message));
+        }
+    }, [message, dispatch]);
 
     if (isLoading) {
         return <Loading status={isLoading} />;

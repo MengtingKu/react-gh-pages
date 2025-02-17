@@ -1,5 +1,5 @@
 /* eslint-disable no-useless-escape */
-import { useState, useCallback } from 'react';
+import { useCallback, useReducer } from 'react';
 import axios from 'axios';
 
 const { VITE_BASE_URL: baseUrl, VITE_APP_PATH: apiPath } = import.meta.env;
@@ -9,11 +9,32 @@ const token = document.cookie.replace(
 );
 axios.defaults.headers.common.Authorization = token;
 
+const initialState = {
+    isLoading: false,
+    message: null,
+};
+
+const adminReducer = (state, action) => {
+    switch (action.type) {
+        case 'SET_LOADING':
+            return { ...state, isLoading: action.payload };
+        case 'SET_MESSAGE':
+            return { ...state, message: action.payload };
+        default:
+            return state;
+    }
+};
+
+const errorInfo = error => ({
+    message: error.response?.data?.message,
+    success: error.response?.data?.success,
+});
+
 const useProductApi = () => {
-    const [isLoading, setIsLoading] = useState(false);
+    const [state, dispatch] = useReducer(adminReducer, initialState);
 
     const getProductList = useCallback(async (page = 1) => {
-        setIsLoading(true);
+        dispatch({ type: 'SET_LOADING', payload: true });
         const url = `${baseUrl}/api/${apiPath}/admin/products?page=${page}`;
 
         try {
@@ -21,15 +42,18 @@ const useProductApi = () => {
 
             return res.data;
         } catch (error) {
-            alert(error?.response?.data?.message || '獲取產品列表失敗');
+            dispatch({
+                type: 'SET_MESSAGE',
+                payload: errorInfo(error),
+            });
             return [];
         } finally {
-            setIsLoading(false);
+            dispatch({ type: 'SET_LOADING', payload: false });
         }
     }, []);
 
     const createProduct = async templateData => {
-        setIsLoading(true);
+        dispatch({ type: 'SET_LOADING', payload: true });
         const url = `${baseUrl}/api/${apiPath}/admin/product`;
 
         const body = {
@@ -43,18 +67,27 @@ const useProductApi = () => {
 
         try {
             const res = await axios.post(url, body);
-            alert(res.data.message);
+            dispatch({
+                type: 'SET_MESSAGE',
+                payload: {
+                    message: res.data.message,
+                    success: res.data.success,
+                },
+            });
 
             return res.data;
         } catch (error) {
-            alert(error.response.data.message || '新增產品失敗');
+            dispatch({
+                type: 'SET_MESSAGE',
+                payload: errorInfo(error),
+            });
         } finally {
-            setIsLoading(false);
+            dispatch({ type: 'SET_LOADING', payload: false });
         }
     };
 
     const updateProduct = async (id, templateData) => {
-        setIsLoading(true);
+        dispatch({ type: 'SET_LOADING', payload: true });
         const url = `${baseUrl}/api/${apiPath}/admin/product/${id}`;
         const body = {
             data: {
@@ -67,34 +100,53 @@ const useProductApi = () => {
 
         try {
             const res = await axios.put(url, body);
-            alert(res.data.message);
+            dispatch({
+                type: 'SET_MESSAGE',
+                payload: {
+                    message: res.data.message,
+                    success: res.data.success,
+                },
+            });
 
             return res.data;
         } catch (error) {
-            alert(error.response.data.message || '更新產品失敗');
+            dispatch({
+                type: 'SET_MESSAGE',
+                payload: errorInfo(error),
+            });
         } finally {
-            setIsLoading(false);
+            dispatch({ type: 'SET_LOADING', payload: false });
         }
     };
 
     const deleteProduct = async id => {
-        setIsLoading(true);
+        dispatch({ type: 'SET_LOADING', payload: true });
         const url = `${baseUrl}/api/${apiPath}/admin/product/${id}`;
 
         try {
             const res = await axios.delete(url);
-            alert(res.data.message);
+            dispatch({
+                type: 'SET_MESSAGE',
+                payload: {
+                    message: res.data.message,
+                    success: res.data.success,
+                },
+            });
 
             return res.data;
         } catch (error) {
-            alert(error.response.data.message || '刪除產品失敗');
+            dispatch({
+                type: 'SET_MESSAGE',
+                payload: errorInfo(error),
+            });
         } finally {
-            setIsLoading(false);
+            dispatch({ type: 'SET_LOADING', payload: false });
         }
     };
 
     return {
-        isLoading,
+        isLoading: state.isLoading,
+        message: state.message,
         getProductList,
         createProduct,
         updateProduct,

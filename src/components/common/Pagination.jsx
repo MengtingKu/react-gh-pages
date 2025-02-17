@@ -8,7 +8,13 @@ const Pagination = ({ pagination, setPagination, setProducts }) => {
 
     const handlePageChange = async (page, e) => {
         e.preventDefault();
-        if (page < 1 || page > pagination.total_pages || loading) return;
+        if (
+            page < 1 ||
+            page > pagination.total_pages ||
+            pagination.current_page === page ||
+            loading
+        )
+            return;
 
         setLoading(true);
         const data = await getProductList(page);
@@ -21,6 +27,7 @@ const Pagination = ({ pagination, setPagination, setProducts }) => {
     const pageItem = () => {
         return new Array(pagination.total_pages).fill(0).map((_, index) => {
             const pageNumber = index + 1;
+
             return (
                 <li
                     className={`page-item ${
@@ -32,10 +39,7 @@ const Pagination = ({ pagination, setPagination, setProducts }) => {
                     <a
                         className="page-link"
                         href="#"
-                        onClick={e =>
-                            pagination.has_next &&
-                            handlePageChange(pageNumber, e)
-                        }
+                        onClick={e => handlePageChange(pageNumber, e)}
                     >
                         {pageNumber}
                     </a>

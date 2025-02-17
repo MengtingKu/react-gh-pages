@@ -1,10 +1,14 @@
 import { useEffect, useState } from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { NavLink, useNavigate } from 'react-router-dom';
+import axios from 'axios';
+import { useDispatch } from 'react-redux';
+import { createAsyncMessage } from '@slice/messageSlice';
 
 const Sidebar = () => {
     const [isOpenSidebar, setIsOpenSidebar] = useState(false);
     const navigate = useNavigate();
+    const dispatch = useDispatch();
 
     const sidebarItems = [
         {
@@ -41,10 +45,22 @@ const Sidebar = () => {
             key: 'logout',
             icon: 'right-from-bracket',
             tooltip: '登出',
-            onClick: () => {
-                document.cookie =
-                    'reactToken=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;';
-                navigate('/');
+            onClick: async () => {
+                try {
+                    await axios.post(
+                        'https://ec-course-api.hexschool.io/v2/logout'
+                    );
+                    document.cookie =
+                        'reactToken=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/react-gh-pages;';
+                    navigate('/');
+                } catch (error) {
+                    dispatch(
+                        createAsyncMessage({
+                            message: error.response?.data?.message,
+                            success: error.response?.data?.success,
+                        })
+                    );
+                }
             },
             isToggle: false,
             className: 'sidebar_item mb-3 transform_btn',

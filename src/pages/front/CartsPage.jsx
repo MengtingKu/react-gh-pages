@@ -1,8 +1,11 @@
 import { useEffect } from 'react';
 import ReactLoading from 'react-loading';
+import { useDispatch } from 'react-redux';
+
 import useCartApi from '@hook/front/useCartApi';
 import DynamicTable from '@components/common/DynamicTable';
 import OrderForm from '@components/front/cartFlow/OrderForm';
+import { createAsyncMessage } from '@slice/messageSlice';
 
 const CartsPage = () => {
     const {
@@ -12,7 +15,9 @@ const CartsPage = () => {
         putCartItem,
         deleteCartItem,
         deleteCarts,
+        message,
     } = useCartApi();
+    const dispatch = useDispatch();
 
     const cartFields = [
         {
@@ -125,6 +130,12 @@ const CartsPage = () => {
 
         fetchCart();
     }, [getCart]);
+
+    useEffect(() => {
+        if (message) {
+            dispatch(createAsyncMessage(message));
+        }
+    }, [message, dispatch]);
 
     return (
         <div
